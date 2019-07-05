@@ -1,5 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Queue} from 'queue-typescript';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-maze',
@@ -8,10 +7,8 @@ import {Queue} from 'queue-typescript';
 })
 export class MazeComponent implements OnInit {
 
-
   width = 500;
   height = 500;
-  showCanvas = false;
 
   private _wall = '#979797';
   private _path = '#ffffff';
@@ -40,7 +37,6 @@ export class MazeComponent implements OnInit {
         this._map[x][y] = this._wall;
       }
     }
-    this.rememberMap();
   }
 
   generateMaze() {
@@ -49,7 +45,6 @@ export class MazeComponent implements OnInit {
   }
 
   primAlgorithm() {
-    this.showCanvas = false;
     const r = this.height / this._scaleFactor;
     const c = this.width / this._scaleFactor;
 
@@ -77,9 +72,9 @@ export class MazeComponent implements OnInit {
 
             // open path between the nodes
             this._map[cu.x][cu.y] = this._path;
+            this._mapMemory.push(new Tile(cu.x, cu.y, this._path));
             this._map[op.x][op.y] = this._path;
-
-            this.rememberMap();
+            this._mapMemory.push(new Tile(op.x, op.y, this._path));
 
             // store last tile in order to mark it later
             last = op;
@@ -95,16 +90,11 @@ export class MazeComponent implements OnInit {
       // if algorithm has resolved, mark end point
       if (frontier.size == 0) {
         this._map[last.x][last.y] = this._end;
-        this.rememberMap();
+        this._mapMemory.push(new Tile(last.x, last.y, this._end));
         // this.draw();
         console.log(`Marking end point: (${last.x}, ${last.y})`);
-        this.showCanvas = true;
       }
     }
-  }
-
-  private rememberMap() {
-    this._mapMemory.push(JSON.parse(JSON.stringify(this._map)));
   }
 
   private getRandomEntry(set: Set<Point>): Point {
@@ -143,9 +133,15 @@ export class MazeComponent implements OnInit {
     };
 
     this._map[start.x][start.y] = this._start;
-    this.rememberMap();
+    this._mapMemory.push(new Tile(start.x, start.y, this._start));
+
     console.log(`Generating start point: (${start.x}, ${start.y})`);
     return start;
+  }
+}
+
+export class Tile {
+  constructor(public x: number, public y: number, public value: string) {
   }
 }
 
