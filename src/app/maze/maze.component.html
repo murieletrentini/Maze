@@ -1,2 +1,8 @@
-<app-canvas [height]="height" [width]="width" [scaleFactor]="_scaleFactor" [mapMemory]="_mapMemory"></app-canvas>
-<button (click)="generateMaze()">Generate Maze</button>
+<app-canvas [height]="height" [width]="width" [scaleFactor]="_scaleFactor" [mapMemory]="_mapMemory" #canvas></app-canvas>
+<div>
+  <button (click)="generateMaze()">Generate Maze</button>
+  <button (click)="canvas.reset()">Reset</button>
+  <button (click)="canvas.previous()">Previous</button>
+  <button (click)="canvas.play()">Play</button>
+  <button (click)="canvas.next()">Next</button>
+</div>

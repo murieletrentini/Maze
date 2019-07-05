@@ -13,7 +13,7 @@ public class Prim {
     char[][] maz = new char[r][c];
     for (int x = 0; x < r; x++) maz[x] = s.toString().toCharArray();
 
-    // select random point and open as start node
+    // select random point and open as reset node
     Point st = new Point((int)(Math.random() * r), (int)(Math.random() * c), null);
     maz[st.r][st.c] = 'S';
 

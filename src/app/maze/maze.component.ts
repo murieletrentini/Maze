@@ -17,9 +17,9 @@ export class MazeComponent implements OnInit {
   private _path = '#ffffff';
   private _start = '#0772ff';
   private _end = '#ff1613';
-  private _scaleFactor = 5;
+  private _scaleFactor = 50;
   private _map;
-  private _mapMemory = new Queue();
+  private _mapMemory = [];
 
 
   constructor() {
@@ -28,12 +28,11 @@ export class MazeComponent implements OnInit {
   ngOnInit() {
 
 
-    
   }
 
 
   initializeMap() {
-    this._mapMemory = new Queue();
+    this._mapMemory = [];
     this._map = {};
     for (let x = 0; x < this.width / this._scaleFactor; x++) {
       this._map[x] = {};
@@ -41,7 +40,7 @@ export class MazeComponent implements OnInit {
         this._map[x][y] = this._wall;
       }
     }
-    this._mapMemory.enqueue({...this._map});
+    this.rememberMap();
   }
 
   generateMaze() {
@@ -54,7 +53,7 @@ export class MazeComponent implements OnInit {
     const r = this.height / this._scaleFactor;
     const c = this.width / this._scaleFactor;
 
-    // pick random start point
+    // pick random reset point
     const start = this.generateStart(c, r);
 
     // iterate through direct neighbours of starting point
@@ -80,7 +79,7 @@ export class MazeComponent implements OnInit {
             this._map[cu.x][cu.y] = this._path;
             this._map[op.x][op.y] = this._path;
 
-            this._mapMemory.enqueue({...this._map});
+            this.rememberMap();
 
             // store last tile in order to mark it later
             last = op;
@@ -96,12 +95,16 @@ export class MazeComponent implements OnInit {
       // if algorithm has resolved, mark end point
       if (frontier.size == 0) {
         this._map[last.x][last.y] = this._end;
-        this._mapMemory.enqueue({...this._map});
+        this.rememberMap();
         // this.draw();
         console.log(`Marking end point: (${last.x}, ${last.y})`);
         this.showCanvas = true;
       }
     }
+  }
+
+  private rememberMap() {
+    this._mapMemory.push(JSON.parse(JSON.stringify(this._map)));
   }
 
   private getRandomEntry(set: Set<Point>): Point {
@@ -140,7 +143,7 @@ export class MazeComponent implements OnInit {
     };
 
     this._map[start.x][start.y] = this._start;
-    this._mapMemory.enqueue({...this._map});
+    this.rememberMap();
     console.log(`Generating start point: (${start.x}, ${start.y})`);
     return start;
   }
