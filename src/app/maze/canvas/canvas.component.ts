@@ -44,6 +44,7 @@ export class CanvasComponent implements OnInit {
   }
 
   play() {
+    this.reset();
     for (this.memoryCounter = 0; this.memoryCounter < this.mapMemory.length; this.memoryCounter++) {
       this.paintMap();
       this.timeoutCounter++;
@@ -61,8 +62,11 @@ export class CanvasComponent implements OnInit {
 
   reset() {
     this.memoryCounter = 0;
-    this.timeOutCounterTile = 1;
     this.timeoutCounter = 1;
+    this.tileCounter = 0;
+    let ctx = this.canvas.nativeElement.getContext('2d');
+    ctx.fillStyle = '#979797';
+    ctx.fillRect(0, 0, this.width, this.height);
   }
 
   previous() {
