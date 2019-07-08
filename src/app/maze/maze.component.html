@@ -1,4 +1,4 @@
-<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor" [timeout]="timeout" [mapMemory]="mapMemory"
+<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor" [timeout]="timeout" [mapMemory]="maze?.mapMemory"
             #canvas></app-canvas>
 <div class="button-bar">
   <mat-form-field class="example-full-width">
@@ -8,9 +8,9 @@
   <mat-form-field class="example-full-width">
     <input matInput placeholder="Timeout" [(ngModel)]="timeout">
   </mat-form-field>
-  <button (click)="canvas.play()" mat-flat-button [disabled]="!isReady">Play</button>
+  <button (click)="canvas.play(true)" mat-flat-button [disabled]="!isReady">Play</button>
 </div>
 <div class="button-bar">
   <button (click)="findPath()" mat-flat-button>Find Path</button>
-  <button (click)="canvas.play()" mat-flat-button [disabled]="!isReady">Play</button>
+  <button (click)="canvas.play(false)" mat-flat-button [disabled]="!isReady">Show Path</button>
 </div>

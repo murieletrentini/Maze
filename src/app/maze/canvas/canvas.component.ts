@@ -42,24 +42,27 @@ export class CanvasComponent implements OnInit {
     ctx.fillRect(currentTile.x * this.scaleFactor, currentTile.y * this.scaleFactor, this.scaleFactor, this.scaleFactor);
   }
 
-  play() {
+  play(resetMaze: boolean) {
     if (this.mapMemory.length == 0) {
       return;
     }
-    this.reset();
+    this.reset(resetMaze);
     let ctx = this.canvas.nativeElement.getContext('2d');
     for (this.memoryCounter = 0; this.memoryCounter < this.mapMemory.length; this.memoryCounter++) {
       this.scheduledTimeouts.push(setTimeout(() => this.paintTile(ctx), this.timeout * this.timeoutCounter++));
     }
   }
 
-  reset() {
+  reset(resetMaze: boolean) {
     this.memoryCounter = 0;
     this.timeoutCounter = 1;
     this.tileCounter = 0;
-    let ctx = this.canvas.nativeElement.getContext('2d');
-    ctx.fillStyle = Constants.wall;
-    ctx.fillRect(0, 0, this.width, this.height);
-    this.scheduledTimeouts.forEach(t => clearTimeout(t));
+    if (resetMaze) {
+      let ctx = this.canvas.nativeElement.getContext('2d');
+      ctx.fillStyle = Constants.wall;
+      ctx.fillRect(0, 0, this.width, this.height);
+      this.scheduledTimeouts.forEach(t => clearTimeout(t));
+    }
+
   }
 }

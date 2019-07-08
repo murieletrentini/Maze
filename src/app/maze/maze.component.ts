@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {PrimService} from './prim.service';
+import {Maze, PrimService} from './prim.service';
+import {AStarService} from './a-star.service';
 
 @Component({
   selector: 'app-maze',
@@ -13,9 +14,10 @@ export class MazeComponent implements OnInit {
   scaleFactor = 10;
   timeout = 25;
   isReady = false;
-  mapMemory = [];
+  maze: Maze;
 
-  constructor(private primService: PrimService) {
+  constructor(private primService: PrimService,
+              private aStarService: AStarService) {
   }
 
   ngOnInit() {
@@ -24,14 +26,12 @@ export class MazeComponent implements OnInit {
 
   generateMaze() {
     this.isReady = false;
-    this.mapMemory = [];
-    this.mapMemory = this.primService.run(this.width, this.height, this.scaleFactor);
+    this.maze = this.primService.run(this.width, this.height, this.scaleFactor);
     this.isReady = true;
   }
 
-
   findPath() {
-
+    this.maze.mapMemory = this.aStarService.run(this.maze);
   }
 }
 
