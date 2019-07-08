@@ -22,7 +22,6 @@
     "@angular/platform-browser-dynamic": "~8.1.0",
     "@angular/router": "~8.1.0",
     "core-js": "^2.5.4",
-    "queue-typescript": "^1.0.1",
     "rxjs": "~6.5.2",
     "stack-typescript": "^1.0.4",
     "tslib": "^1.9.0",
