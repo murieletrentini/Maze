@@ -1,8 +1,16 @@
-<app-canvas [height]="height" [width]="width" [scaleFactor]="_scaleFactor" [mapMemory]="_mapMemory" #canvas></app-canvas>
-<div>
-  <button (click)="generateMaze()">Generate Maze</button>
-  <button (click)="canvas.reset()">Reset</button>
-  <button (click)="canvas.previous()">Previous</button>
-  <button (click)="canvas.play()">Play</button>
-  <button (click)="canvas.next()">Next</button>
+<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor" [timeout]="timeout" [mapMemory]="mapMemory"
+            #canvas></app-canvas>
+<div class="button-bar">
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="Scale Factor" [(ngModel)]="scaleFactor">
+  </mat-form-field>
+  <button (click)="generateMaze()" mat-flat-button>Generate Maze</button>
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="Timeout" [(ngModel)]="timeout">
+  </mat-form-field>
+  <button (click)="canvas.play()" mat-flat-button [disabled]="!isReady">Play</button>
+</div>
+<div class="button-bar">
+  <button (click)="findPath()" mat-flat-button>Find Path</button>
+  <button (click)="canvas.play()" mat-flat-button [disabled]="!isReady">Play</button>
 </div>
