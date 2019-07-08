@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Maze, Tile} from './prim.service';
+import {Maze, PrimService, Tile} from './prim.service';
 import {Constants} from './constants';
-import {Stack} from 'stack-typescript';
+import {Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,23 +10,27 @@ export class AStarService {
   private _start: Tile;
   private _end: Tile;
   private _map: any;
-  private _mapMemory: Tile[];
 
   private open: AStarTile[] = [];
   private close: AStarTile[] = [];
 
-  constructor() {
+  private _tiles: Subject<Tile> = new Subject();
+
+  constructor(private primService: PrimService) {
   }
 
-  run(maze: Maze): Tile[] {
+  tiles$(): Observable<Tile> {
+    return this._tiles.asObservable();
+  }
+
+
+  run() {
+    const maze = this.primService.getMaze();
     this._start = maze.start;
     this._end = maze.end;
     this._map = maze.map;
-    this._mapMemory = [];
 
     this.aStar();
-
-    return this._mapMemory;
   }
 
   private aStar() {
@@ -40,6 +44,9 @@ export class AStarService {
 
       // switch Tile from open to closed list
       this.close.push(currentTile);
+      if (!this.isStartPoint(currentTile) && !this.isEndPoint(currentTile)) {
+        this._tiles.next(new Tile(currentTile.x, currentTile.y, Constants.solutionCandidate));
+      }
       this.open.splice(this.open.indexOf(currentTile), 1);
 
       if (currentTile.x == this._end.x && currentTile.y == this._end.y) {
@@ -50,19 +57,9 @@ export class AStarService {
       this.addNeighbours(currentTile);
     }
 
-    this.markSolutionFinding();
     this.markSolution();
-
   }
 
-  private markSolutionFinding() {
-    this.close.forEach(t => {
-      let tile = new Tile(t.x, t.y, Constants.solutionCandidate);
-      if (!this.isStartPoint(t) && !this.isEndPoint(t)) {
-        return this._mapMemory.push(tile);
-      }
-    });
-  }
 
   private isStartPoint(t: AStarTile) {
     return this.isSameTile(t, this._start);
@@ -80,7 +77,7 @@ export class AStarService {
     let current = this.close.find(t => this.isEndPoint(t));
     do {
       if (!this.isStartPoint(current) && !this.isEndPoint(current)) {
-        this._mapMemory.push(new Tile(current.x, current.y, Constants.solution));
+        this._tiles.next(new Tile(current.x, current.y, Constants.solution));
       }
       current = current.parent;
     } while (current.parent);

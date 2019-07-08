@@ -1,42 +1,38 @@
 import {Injectable} from '@angular/core';
 import {Constants} from './constants';
+import {Observable, of, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PrimService {
   private _map;
-  private _mapMemory = [];
   private _maze;
 
   private _width: number;
   private _scaleFactor: number;
   private _height: number;
 
+  private _tiles: Subject<Tile> = new Subject();
+
   constructor() {
   }
 
-  private initializeMap() {
-    this._map = {};
-    this._mapMemory = [];
-    this._maze = new Maze(this._map, this._mapMemory);
-    for (let x = 0; x < this._width / this._scaleFactor; x++) {
-      this._map[x] = {};
-      for (let y = 0; y < this._height / this._scaleFactor; y++) {
-        this._map[x][y] = Constants.wall;
-      }
-    }
+  tiles$(): Observable<Tile> {
+    return this._tiles.asObservable();
   }
 
-  run(width: number, height: number, scaleFactor: number): Maze {
+  getMaze(): any {
+    return this._maze;
+  }
+
+  run(width: number, height: number, scaleFactor: number) {
     this._width = width;
     this._height = height;
     this._scaleFactor = scaleFactor;
 
     this.initializeMap();
     this.primAlgorithm();
-
-    return this._maze;
   }
 
   primAlgorithm() {
@@ -68,9 +64,9 @@ export class PrimService {
 
             // open path between the nodes
             this._map[cu.x][cu.y] = Constants.path;
-            this._mapMemory.push(new Tile(cu.x, cu.y, Constants.path));
+            this._tiles.next(new Tile(cu.x, cu.y, Constants.path));
             this._map[op.x][op.y] = Constants.path;
-            this._mapMemory.push(new Tile(op.x, op.y, Constants.path));
+            this._tiles.next(new Tile(op.x, op.y, Constants.path));
 
             // store last tile in order to mark it later
             last = op;
@@ -87,10 +83,21 @@ export class PrimService {
       if (frontier.size == 0) {
         this._map[last.x][last.y] = Constants.end;
         let endTile = new Tile(last.x, last.y, Constants.end);
-        this._mapMemory.push(endTile);
+        this._tiles.next(endTile);
         this._maze.end = endTile;
         // this.draw();
         console.log(`Marking end point: (${last.x}, ${last.y})`);
+      }
+    }
+  }
+
+  private initializeMap() {
+    this._map = {};
+    this._maze = new Maze(this._map);
+    for (let x = 0; x < this._width / this._scaleFactor; x++) {
+      this._map[x] = {};
+      for (let y = 0; y < this._height / this._scaleFactor; y++) {
+        this._map[x][y] = Constants.wall;
       }
     }
   }
@@ -132,7 +139,7 @@ export class PrimService {
 
     this._map[start.x][start.y] = Constants.start;
     let startTile = new Tile(start.x, start.y, Constants.start);
-    this._mapMemory.push(startTile);
+    this._tiles.next(startTile);
     this._maze.start = startTile;
 
     console.log(`Generating start point: (${start.x}, ${start.y})`);
@@ -150,7 +157,7 @@ export class Maze {
   start: Tile;
   end: Tile;
 
-  constructor(public map: any, public mapMemory: Tile[]) {
+  constructor(public map: any) {
   }
 
 }

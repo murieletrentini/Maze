@@ -1,5 +1,4 @@
-<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor" [timeout]="timeout"
-            [mapMemory]="maze?.mapMemory"
+<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor" [delay]="timeout"
             #canvas></app-canvas>
 <div class="button-bar">
   <mat-form-field class="example-full-width">
@@ -11,7 +10,5 @@
 </div>
 <div class="button-bar">
   <button (click)="generateMaze()" mat-flat-button>Generate Maze</button>
-  <button (click)="canvas.play(true)" mat-flat-button [disabled]="!isReady">Show Maze</button>
   <button (click)="findPath()" mat-flat-button>Find Path</button>
-  <button (click)="canvas.play(false)" mat-flat-button [disabled]="!isReady">Show Path</button>
 </div>

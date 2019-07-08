@@ -14,7 +14,6 @@ export class MazeComponent implements OnInit {
   scaleFactor = 10;
   timeout = 25;
   isReady = false;
-  maze: Maze;
 
   constructor(private primService: PrimService,
               private aStarService: AStarService) {
@@ -26,12 +25,12 @@ export class MazeComponent implements OnInit {
 
   generateMaze() {
     this.isReady = false;
-    this.maze = this.primService.run(this.width, this.height, this.scaleFactor);
+    this.primService.run(this.width, this.height, this.scaleFactor);
     this.isReady = true;
   }
 
   findPath() {
-    this.maze.mapMemory = this.aStarService.run(this.maze);
+    this.aStarService.run();
   }
 }
 
