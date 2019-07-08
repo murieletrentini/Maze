@@ -26,6 +26,11 @@ export class PrimService {
     return this._maze;
   }
 
+  reset() {
+    this._tiles = new Subject();
+    this.initializeMap();
+  }
+
   run(width: number, height: number, scaleFactor: number) {
     this._width = width;
     this._height = height;
@@ -89,6 +94,7 @@ export class PrimService {
         console.log(`Marking end point: (${last.x}, ${last.y})`);
       }
     }
+    this._tiles.complete();
   }
 
   private initializeMap() {

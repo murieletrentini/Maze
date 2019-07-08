@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Maze, PrimService} from './prim.service';
 import {AStarService} from './a-star.service';
 
@@ -12,11 +12,14 @@ export class MazeComponent implements OnInit {
   width = 500;
   height = 500;
   scaleFactor = 10;
-  timeout = 25;
-  isReady = false;
+  delay = 10;
+  isResetting = false;
+  needsResettingMaze = false;
+  needsResettingPath = false;
 
   constructor(private primService: PrimService,
-              private aStarService: AStarService) {
+              private aStarService: AStarService,
+              private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -24,13 +27,25 @@ export class MazeComponent implements OnInit {
 
 
   generateMaze() {
-    this.isReady = false;
+    this.needsResettingMaze = true;
     this.primService.run(this.width, this.height, this.scaleFactor);
-    this.isReady = true;
   }
 
   findPath() {
+    this.needsResettingPath = true;
     this.aStarService.run();
+  }
+
+  reset() {
+    this.isResetting = true;
+    this.primService.reset();
+    this.aStarService.reset();
+
+    // force onDestroy, onInit for canvas component
+    this.cd.detectChanges();
+    this.isResetting = false;
+    this.needsResettingMaze = false;
+    this.needsResettingPath = false;
   }
 }
 

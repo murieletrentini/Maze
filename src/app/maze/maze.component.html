@@ -1,14 +1,15 @@
-<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor" [delay]="timeout"
-            #canvas></app-canvas>
+<app-canvas *ngIf="!isResetting" [height]="height" [width]="width" [scaleFactor]="scaleFactor"
+            [delay]="delay"></app-canvas>
 <div class="button-bar">
   <mat-form-field class="example-full-width">
     <input matInput placeholder="Scale Factor" [(ngModel)]="scaleFactor">
   </mat-form-field>
   <mat-form-field class="example-full-width">
-    <input matInput placeholder="Timeout" [(ngModel)]="timeout">
+    <input matInput placeholder="Delay" [(ngModel)]="delay">
   </mat-form-field>
 </div>
 <div class="button-bar">
-  <button (click)="generateMaze()" mat-flat-button>Generate Maze</button>
-  <button (click)="findPath()" mat-flat-button>Find Path</button>
+  <button (click)="generateMaze()" [disabled]="needsResettingMaze" mat-flat-button>Generate Maze</button>
+  <button (click)="findPath()" [disabled]="needsResettingPath" mat-flat-button>Find Path</button>
+  <button (click)="reset()" mat-flat-button>Reset</button>
 </div>

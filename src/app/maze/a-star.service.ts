@@ -11,21 +11,30 @@ export class AStarService {
   private _end: Tile;
   private _map: any;
 
-  private open: AStarTile[] = [];
-  private close: AStarTile[] = [];
+  private _open: AStarTile[] = [];
+  private _close: AStarTile[] = [];
 
-  private _tiles: Subject<Tile> = new Subject();
+  private _tiles$: Subject<Tile> = new Subject();
 
   constructor(private primService: PrimService) {
   }
 
   tiles$(): Observable<Tile> {
-    return this._tiles.asObservable();
+    return this._tiles$.asObservable();
   }
 
+  reset() {
+    this._tiles$ = new Subject();
+    this._open = [];
+    this._close = [];
+  }
 
   run() {
     const maze = this.primService.getMaze();
+    if (!maze) {
+      console.error('Needs a maze');
+      return;
+    }
     this._start = maze.start;
     this._end = maze.end;
     this._map = maze.map;
@@ -37,17 +46,17 @@ export class AStarService {
     let start = new AStarTile(this._start.x, this._start.y, null);
     start.g = 0;
     start.h = this.heuristic(start.x, start.y);
-    this.open.push(start);
+    this._open.push(start);
 
-    while (this.open.length > 0) {
-      const currentTile = minFValue(this.open);
+    while (this._open.length > 0) {
+      const currentTile = minFValue(this._open);
 
-      // switch Tile from open to closed list
-      this.close.push(currentTile);
+      // switch Tile from _open to closed list
+      this._close.push(currentTile);
       if (!this.isStartPoint(currentTile) && !this.isEndPoint(currentTile)) {
-        this._tiles.next(new Tile(currentTile.x, currentTile.y, Constants.solutionCandidate));
+        this._tiles$.next(new Tile(currentTile.x, currentTile.y, Constants.solutionCandidate));
       }
-      this.open.splice(this.open.indexOf(currentTile), 1);
+      this._open.splice(this._open.indexOf(currentTile), 1);
 
       if (currentTile.x == this._end.x && currentTile.y == this._end.y) {
         console.log('Path found!');
@@ -74,10 +83,10 @@ export class AStarService {
   }
 
   private markSolution() {
-    let current = this.close.find(t => this.isEndPoint(t));
+    let current = this._close.find(t => this.isEndPoint(t));
     do {
       if (!this.isStartPoint(current) && !this.isEndPoint(current)) {
-        this._tiles.next(new Tile(current.x, current.y, Constants.solution));
+        this._tiles$.next(new Tile(current.x, current.y, Constants.solution));
       }
       current = current.parent;
     } while (current.parent);
@@ -99,11 +108,11 @@ export class AStarService {
             continue;
           }
           // ignore if already on closed list
-          if (this.close.find(t => t.x == neighbourX && t.y == neighbourY)) {
+          if (this._close.find(t => t.x == neighbourX && t.y == neighbourY)) {
             continue;
           }
 
-          let neighbour = this.open.find(t => t.x == neighbourX && t.y == neighbourY);
+          let neighbour = this._open.find(t => t.x == neighbourX && t.y == neighbourY);
           if (neighbour) {
             if (neighbour.g > current.g + 1) {
               //  found better path to existing neighbour
@@ -112,11 +121,11 @@ export class AStarService {
               neighbour.h = this.heuristic(neighbour.x, neighbour.y);
             }
           } else {
-            // add new neighbour to open list
+            // add new neighbour to _open list
             neighbour = new AStarTile(neighbourX, neighbourY, current);
             neighbour.g = current.g + 1;
             neighbour.h = this.heuristic(neighbour.x, neighbour.y);
-            this.open.push(neighbour);
+            this._open.push(neighbour);
           }
         } catch (e) {
           // ignore ArrayIndexOutOfBounds
