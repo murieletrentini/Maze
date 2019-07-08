@@ -50,19 +50,42 @@ export class AStarService {
       this.addNeighbours(currentTile);
     }
 
-    const stack = new Stack<AStarTile>();
-    let current = this.close[this.close.length - 2];
+    this.markSolutionFinding();
+    this.markSolution();
+
+  }
+
+  private markSolutionFinding() {
+    this.close.forEach(t => {
+      let tile = new Tile(t.x, t.y, Constants.solutionCandidate);
+      if (!this.isStartPoint(t) && !this.isEndPoint(t)) {
+        return this._mapMemory.push(tile);
+      }
+    });
+  }
+
+  private isStartPoint(t: AStarTile) {
+    return this.isSameTile(t, this._start);
+  }
+
+  private isEndPoint(t: AStarTile) {
+    return this.isSameTile(t, this._end);
+  }
+
+  private isSameTile(s: AStarTile, t: Tile): boolean {
+    return s.x == t.x && s.y == t.y;
+  }
+
+  private markSolution() {
+    let current = this.close.find(t => this.isEndPoint(t));
     do {
-      stack.push(current);
+      if (!this.isStartPoint(current) && !this.isEndPoint(current)) {
+        this._mapMemory.push(new Tile(current.x, current.y, Constants.solution));
+      }
       current = current.parent;
     } while (current.parent);
-
-    this.convertToMapMemory(stack);
   }
 
-  private convertToMapMemory(stack: Stack<AStarTile>) {
-    stack.toArray().forEach(t => this._mapMemory.push(new Tile(t.x, t.y, Constants.solution)));
-  }
 
   private addNeighbours(current: AStarTile) {
     for (let x = -1; x <= 1; x++) {
@@ -109,7 +132,6 @@ export class AStarService {
     // Manhattan
     return Math.abs(x - this._end.x) + Math.abs(y - this._end.y);
   }
-
 }
 
 class AStarTile {
