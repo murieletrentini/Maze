@@ -49,4 +49,8 @@ export class MazeComponent implements OnInit {
   }
 }
 
+//TODO:
+// 1.) some  css
+// 2.) what happens if i change scale during drawing
+// 3.) make sclae factor nicer -> no "part width row"
 
