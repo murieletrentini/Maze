@@ -42,12 +42,10 @@ export class MazeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.canvas.isRunning$()
       .subscribe(
         value => this.scaleFactorOptions = Object.assign({}, this.scaleFactorOptions, {disabled: value})
       );
-
   }
 
   generateMaze() {
@@ -64,6 +62,7 @@ export class MazeComponent implements OnInit {
     this.primService.reset();
     this.aStarService.reset();
 
+    this.canvas.ngOnDestroy();
     this.canvas.ngOnInit();
     this.needsResettingMaze = false;
     this.needsResettingPath = false;

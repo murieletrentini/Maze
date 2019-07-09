@@ -1,8 +1,8 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {PrimService} from '../prim.service';
 import {Constants} from '../constants';
 import {concat, Observable, of, Subject} from 'rxjs';
-import {concatMap, debounceTime, delay, first} from 'rxjs/operators';
+import {concatMap, debounceTime, delay, first, takeUntil} from 'rxjs/operators';
 import {AStarService} from '../a-star.service';
 
 @Component({
@@ -10,7 +10,7 @@ import {AStarService} from '../a-star.service';
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.sass']
 })
-export class CanvasComponent implements OnInit {
+export class CanvasComponent implements OnInit, OnDestroy {
   @Input() width: number;
   @Input() height: number;
   @Input() scaleFactor: number;
@@ -21,6 +21,7 @@ export class CanvasComponent implements OnInit {
   @Input() running: boolean;
 
   private _isRunning$: Subject<boolean> = new Subject();
+  private _shouldDestroy$: Subject<boolean> = new Subject();
 
   constructor(private primService: PrimService,
               private aStarService: AStarService) {
@@ -39,6 +40,10 @@ export class CanvasComponent implements OnInit {
     this.paintTilesFromServices(ctx);
 
     this.sendStop();
+  }
+
+  ngOnDestroy(): void {
+    this._shouldDestroy$.next(true);
   }
 
   private sendStart() {
@@ -65,7 +70,8 @@ export class CanvasComponent implements OnInit {
   private paintTilesFromServices(ctx) {
     concat(this.primService.tiles$(), this.aStarService.tiles$())
       .pipe(
-        concatMap(tile => of(tile).pipe(delay(this.delay)))
+        concatMap(tile => of(tile).pipe(delay(this.delay))),
+        takeUntil(this._shouldDestroy$)
       )
       .subscribe(delayedTile => {
         this.paintTile(ctx, delayedTile);
