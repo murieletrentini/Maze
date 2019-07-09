@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {PrimService, Tile} from './prim.service';
+import {MazeGeneratorService, Tile} from './maze-generator.service';
 import {Constants} from './constants';
 import {Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AStarService {
+export class PathFinderService {
   private _start: Tile;
   private _end: Tile;
   private _map: any;
@@ -16,7 +16,7 @@ export class AStarService {
 
   private _tiles$: Subject<Tile> = new Subject();
 
-  constructor(private primService: PrimService) {
+  constructor(private mazeGeneratorService: MazeGeneratorService) {
   }
 
   tiles$(): Observable<Tile> {
@@ -30,7 +30,7 @@ export class AStarService {
   }
 
   run() {
-    const maze = this.primService.getMaze();
+    const maze = this.mazeGeneratorService.getMaze();
     if (!maze) {
       console.error('Needs a maze');
       return;
@@ -39,10 +39,10 @@ export class AStarService {
     this._end = maze.end;
     this._map = maze.map;
 
-    this.aStar();
+    this.aStarAlgorithm();
   }
 
-  private aStar() {
+  private aStarAlgorithm() {
     let start = new AStarTile(this._start.x, this._start.y, null);
     start.g = 0;
     start.h = this.heuristic(start.x, start.y);

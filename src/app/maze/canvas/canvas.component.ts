@@ -1,9 +1,9 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {PrimService} from '../prim.service';
+import {MazeGeneratorService} from '../maze-generator.service';
 import {Constants} from '../constants';
 import {concat, Observable, of, Subject} from 'rxjs';
 import {concatMap, debounceTime, delay, first, takeUntil} from 'rxjs/operators';
-import {AStarService} from '../a-star.service';
+import {PathFinderService} from '../path-finder.service';
 
 @Component({
   selector: 'app-canvas',
@@ -23,8 +23,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
   private _isRunning$: Subject<boolean> = new Subject();
   private _shouldDestroy$: Subject<boolean> = new Subject();
 
-  constructor(private primService: PrimService,
-              private aStarService: AStarService) {
+  constructor(private mazeGeneratorService: MazeGeneratorService,
+              private pathFinderService: PathFinderService) {
   }
 
   isRunning$(): Observable<boolean> {
@@ -47,7 +47,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   private sendStart() {
-    concat(this.primService.tiles$(), this.aStarService.tiles$())
+    concat(this.mazeGeneratorService.tiles$(), this.pathFinderService.tiles$())
       .pipe(
         first()
       )
@@ -57,7 +57,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   private sendStop() {
-    concat(this.primService.tiles$(), this.aStarService.tiles$())
+    concat(this.mazeGeneratorService.tiles$(), this.pathFinderService.tiles$())
       .pipe(
         concatMap(tile => of(tile).pipe(delay(this.delay))),
         debounceTime(this.delay * 2)
@@ -68,7 +68,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   private paintTilesFromServices(ctx) {
-    concat(this.primService.tiles$(), this.aStarService.tiles$())
+    concat(this.mazeGeneratorService.tiles$(), this.pathFinderService.tiles$())
       .pipe(
         concatMap(tile => of(tile).pipe(delay(this.delay))),
         takeUntil(this._shouldDestroy$)

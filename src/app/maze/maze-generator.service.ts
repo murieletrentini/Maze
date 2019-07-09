@@ -5,7 +5,7 @@ import {Observable, Subject} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class PrimService {
+export class MazeGeneratorService {
   private _map;
   private _maze;
 

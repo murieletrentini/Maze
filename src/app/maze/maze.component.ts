@@ -1,6 +1,6 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {PrimService} from './prim.service';
-import {AStarService} from './a-star.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MazeGeneratorService} from './maze-generator.service';
+import {PathFinderService} from './path-finder.service';
 import {Options} from 'ng5-slider';
 import {CanvasComponent} from './canvas/canvas.component';
 
@@ -32,35 +32,34 @@ export class MazeComponent implements OnInit {
     ],
   };
   delay = 10;
-  isResetting = false;
   needsResettingMaze = false;
   needsResettingPath = false;
 
-  constructor(private primService: PrimService,
-              private aStarService: AStarService,
-              private cd: ChangeDetectorRef) {
+  constructor(private mazeGeneratorService: MazeGeneratorService,
+              private pathFinderService: PathFinderService) {
   }
 
   ngOnInit(): void {
     this.canvas.isRunning$()
       .subscribe(
+        // create new object to trigger angular change detection
         value => this.scaleFactorOptions = Object.assign({}, this.scaleFactorOptions, {disabled: value})
       );
   }
 
   generateMaze() {
     this.needsResettingMaze = true;
-    this.primService.run(this.width, this.height, this.scaleFactor);
+    this.mazeGeneratorService.run(this.width, this.height, this.scaleFactor);
   }
 
   findPath() {
     this.needsResettingPath = true;
-    this.aStarService.run();
+    this.pathFinderService.run();
   }
 
   reset() {
-    this.primService.reset();
-    this.aStarService.reset();
+    this.mazeGeneratorService.reset();
+    this.pathFinderService.reset();
 
     this.canvas.ngOnDestroy();
     this.canvas.ngOnInit();
@@ -68,8 +67,3 @@ export class MazeComponent implements OnInit {
     this.needsResettingPath = false;
   }
 }
-
-//TODO:
-// 2.) what happens if i change scale during drawing
-// 1.) fix bug in path finding
-
