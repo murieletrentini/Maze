@@ -2,11 +2,13 @@
             [delay]="delay" #canvas></app-canvas>
 <div class="input-bar">
   <div class="custom-slider">
+    <label>Scale Factor</label>
     <ng5-slider [(value)]="scaleFactor" [options]="scaleFactorOptions"></ng5-slider>
   </div>
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="Delay" [(ngModel)]="delay">
-  </mat-form-field>
+  <div class="custom-slider">
+    <label>Delay</label>
+    <ng5-slider [(value)]="delay" [options]="delayOptions"></ng5-slider>
+  </div>
 </div>
 <div class="button-bar">
   <button (click)="generateMaze()" [disabled]="needsResettingMaze" mat-flat-button>

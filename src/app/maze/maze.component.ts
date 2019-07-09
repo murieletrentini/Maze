@@ -31,6 +31,10 @@ export class MazeComponent implements OnInit {
       {value: 50, legend: '50'},
     ],
   };
+  delayOptions: Options = {
+    floor: 0,
+    ceil: 100,
+  };
   delay = 10;
   needsResettingMaze = false;
   needsResettingPath = false;
