@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Constants} from './constants';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -59,7 +59,6 @@ export class PrimService {
       // pick current tile at random
       let cu: Point = this.getRandomEntry(frontier);
       frontier.delete(cu);
-      console.log(`current random entry: (${cu.x}, ${cu.y})`);
 
       let op: Point = cu.opposite();
       try {
@@ -132,7 +131,6 @@ export class PrimService {
         // add eligible points to frontier
         let eligibleNeighbour = new Point(current.x + x, current.y + y, current);
         frontier.add(eligibleNeighbour);
-        console.log(`Adding neighbour: (${eligibleNeighbour.x}, ${eligibleNeighbour.y})`);
       }
     }
   }

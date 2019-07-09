@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Maze, PrimService, Tile} from './prim.service';
+import {PrimService, Tile} from './prim.service';
 import {Constants} from './constants';
 import {Observable, Subject} from 'rxjs';
 
@@ -103,7 +103,7 @@ export class AStarService {
         const neighbourX = current.x + x;
         const neighbourY = current.y + y;
         try {
-          // ignore path-tiles
+          // ignore wall-tiles
           if (this._map[neighbourX][neighbourY] == Constants.wall) {
             continue;
           }
@@ -121,13 +121,15 @@ export class AStarService {
               neighbour.h = this.heuristic(neighbour.x, neighbour.y);
             }
           } else {
-            // add new neighbour to _open list
+            // add new neighbour to open list
             neighbour = new AStarTile(neighbourX, neighbourY, current);
             neighbour.g = current.g + 1;
             neighbour.h = this.heuristic(neighbour.x, neighbour.y);
             this._open.push(neighbour);
           }
         } catch (e) {
+          // debugger;
+          //TODO
           // ignore ArrayIndexOutOfBounds
         }
       }
@@ -159,9 +161,7 @@ class AStarTile {
     }
     return this.g + this.h;
   }
-
 }
-
 
 function minFValue(arr: AStarTile[]) {
   const min = Math.min.apply(null, arr.map(t => t.f()));

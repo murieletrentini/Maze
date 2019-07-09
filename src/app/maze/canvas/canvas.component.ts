@@ -1,8 +1,8 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {PrimService, Tile} from '../prim.service';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {PrimService} from '../prim.service';
 import {Constants} from '../constants';
-import {concat, of} from 'rxjs';
-import {concatMap, delay} from 'rxjs/operators';
+import {concat, Observable, of, Subject} from 'rxjs';
+import {concatMap, debounceTime, delay, first} from 'rxjs/operators';
 import {AStarService} from '../a-star.service';
 
 @Component({
@@ -10,7 +10,7 @@ import {AStarService} from '../a-star.service';
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.sass']
 })
-export class CanvasComponent implements OnInit, OnDestroy {
+export class CanvasComponent implements OnInit {
   @Input() width: number;
   @Input() height: number;
   @Input() scaleFactor: number;
@@ -20,28 +20,67 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   @Input() running: boolean;
 
+  private _isRunning$: Subject<boolean> = new Subject();
+
   constructor(private primService: PrimService,
               private aStarService: AStarService) {
   }
 
+  isRunning$(): Observable<boolean> {
+    return this._isRunning$.asObservable();
+  }
+
   ngOnInit() {
     let ctx = this.canvas.nativeElement.getContext('2d');
+    this.resetCanvas(ctx);
+
+    this.sendStart();
+
+    this.paintTilesFromServices(ctx);
+
+    this.sendStop();
+  }
+
+  private sendStart() {
+    concat(this.primService.tiles$(), this.aStarService.tiles$())
+      .pipe(
+        first()
+      )
+      .subscribe(() => {
+        this._isRunning$.next(true);
+      });
+  }
+
+  private sendStop() {
     concat(this.primService.tiles$(), this.aStarService.tiles$())
       .pipe(
         concatMap(tile => of(tile).pipe(delay(this.delay))),
+        debounceTime(this.delay * 2)
+      )
+      .subscribe(() => {
+        this._isRunning$.next(false);
+      });
+  }
+
+  private paintTilesFromServices(ctx) {
+    concat(this.primService.tiles$(), this.aStarService.tiles$())
+      .pipe(
+        concatMap(tile => of(tile).pipe(delay(this.delay)))
       )
       .subscribe(delayedTile => {
         this.paintTile(ctx, delayedTile);
       });
-
-    console.log("INIT")
   }
 
-  ngOnDestroy(): void {
-    console.log("DESTROY")
+  private resetCanvas(ctx) {
+    ctx.fillStyle = Constants.wall;
+    ctx.fillRect(0, 0, this.width, this.height);
   }
 
   private paintTile(ctx, currentTile) {
+    if (!currentTile) {
+      return;
+    }
     ctx.fillStyle = currentTile.value;
     ctx.moveTo(currentTile.x, currentTile.y);
     ctx.fillRect(currentTile.x * this.scaleFactor, currentTile.y * this.scaleFactor, this.scaleFactor, this.scaleFactor);

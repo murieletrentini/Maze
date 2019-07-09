@@ -1,9 +1,9 @@
-<app-canvas *ngIf="!isResetting" [height]="height" [width]="width" [scaleFactor]="scaleFactor"
-            [delay]="delay"></app-canvas>
-<div class="button-bar">
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="Scale Factor" [(ngModel)]="scaleFactor">
-  </mat-form-field>
+<app-canvas [height]="height" [width]="width" [scaleFactor]="scaleFactor"
+            [delay]="delay" #canvas></app-canvas>
+<div class="input-bar">
+  <div class="custom-slider">
+    <ng5-slider [(value)]="scaleFactor" [options]="scaleFactorOptions"></ng5-slider>
+  </div>
   <mat-form-field class="example-full-width">
     <input matInput placeholder="Delay" [(ngModel)]="delay">
   </mat-form-field>
@@ -13,7 +13,7 @@
     <mat-icon aria-hidden="false" aria-label="Example home icon">fingerprint</mat-icon>
     Generate Maze
   </button>
-  <button (click)="findPath()" [disabled]="needsResettingPath" mat-flat-button>
+  <button (click)="findPath()" [disabled]="needsResettingPath || !needsResettingMaze" mat-flat-button>
     <mat-icon aria-hidden="false" aria-label="Example home icon">timeline</mat-icon>
     Find Path
   </button>

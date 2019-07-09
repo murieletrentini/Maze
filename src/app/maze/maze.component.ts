@@ -1,6 +1,8 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {Maze, PrimService} from './prim.service';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {PrimService} from './prim.service';
 import {AStarService} from './a-star.service';
+import {Options} from 'ng5-slider';
+import {CanvasComponent} from './canvas/canvas.component';
 
 @Component({
   selector: 'app-maze',
@@ -8,10 +10,27 @@ import {AStarService} from './a-star.service';
   styleUrls: ['./maze.component.sass']
 })
 export class MazeComponent implements OnInit {
+  @ViewChild('canvas', {static: true}) canvas: CanvasComponent;
 
   width = 500;
   height = 500;
-  scaleFactor = 10;
+  scaleFactor: number = 10;
+  scaleFactorOptions: Options = {
+    floor: 2,
+    ceil: 50,
+    showTicks: true,
+    hideLimitLabels: true,
+    hidePointerLabels: true,
+    stepsArray: [
+      {value: 2, legend: '2'},
+      {value: 4, legend: '4'},
+      {value: 5, legend: '5'},
+      {value: 10, legend: '10'},
+      {value: 20, legend: '20'},
+      {value: 25, legend: '25'},
+      {value: 50, legend: '50'},
+    ],
+  };
   delay = 10;
   isResetting = false;
   needsResettingMaze = false;
@@ -22,9 +41,14 @@ export class MazeComponent implements OnInit {
               private cd: ChangeDetectorRef) {
   }
 
-  ngOnInit() {
-  }
+  ngOnInit(): void {
 
+    this.canvas.isRunning$()
+      .subscribe(
+        value => this.scaleFactorOptions = Object.assign({}, this.scaleFactorOptions, {disabled: value})
+      );
+
+  }
 
   generateMaze() {
     this.needsResettingMaze = true;
@@ -37,20 +61,16 @@ export class MazeComponent implements OnInit {
   }
 
   reset() {
-    this.isResetting = true;
     this.primService.reset();
     this.aStarService.reset();
 
-    // force onDestroy, onInit for canvas component
-    this.cd.detectChanges();
-    this.isResetting = false;
+    this.canvas.ngOnInit();
     this.needsResettingMaze = false;
     this.needsResettingPath = false;
   }
 }
 
 //TODO:
-// 1.) some  css
 // 2.) what happens if i change scale during drawing
-// 3.) make sclae factor nicer -> no "part width row"
+// 1.) fix bug in path finding
 
