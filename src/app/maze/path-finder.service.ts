@@ -51,7 +51,7 @@ export class PathFinderService {
     while (this._open.length > 0) {
       const currentTile = minFValue(this._open);
 
-      // switch Tile from _open to closed list
+      // switch Tile from open to closed list
       this._close.push(currentTile);
       this.drawPath(currentTile);
       this._open.splice(this._open.indexOf(currentTile), 1);
