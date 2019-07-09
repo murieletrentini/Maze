@@ -1,11 +1,12 @@
 import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatInputModule} from '@angular/material';
+import {MatButtonModule, MatIconModule, MatInputModule} from '@angular/material';
 
 const MODULES = [
   BrowserAnimationsModule,
   MatButtonModule,
-  MatInputModule
+  MatInputModule,
+  MatIconModule
 ];
 
 @NgModule({

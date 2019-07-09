@@ -9,7 +9,16 @@
   </mat-form-field>
 </div>
 <div class="button-bar">
-  <button (click)="generateMaze()" [disabled]="needsResettingMaze" mat-flat-button>Generate Maze</button>
-  <button (click)="findPath()" [disabled]="needsResettingPath" mat-flat-button>Find Path</button>
-  <button (click)="reset()" mat-flat-button>Reset</button>
+  <button (click)="generateMaze()" [disabled]="needsResettingMaze" mat-flat-button>
+    <mat-icon aria-hidden="false" aria-label="Example home icon">fingerprint</mat-icon>
+    Generate Maze
+  </button>
+  <button (click)="findPath()" [disabled]="needsResettingPath" mat-flat-button>
+    <mat-icon aria-hidden="false" aria-label="Example home icon">timeline</mat-icon>
+    Find Path
+  </button>
+  <button (click)="reset()" mat-flat-button>
+    <mat-icon aria-hidden="false" aria-label="Example home icon">autorenew</mat-icon>
+    Reset
+  </button>
 </div>
