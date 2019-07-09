@@ -53,9 +53,7 @@ export class AStarService {
 
       // switch Tile from _open to closed list
       this._close.push(currentTile);
-      if (!this.isStartPoint(currentTile) && !this.isEndPoint(currentTile)) {
-        this._tiles$.next(new Tile(currentTile.x, currentTile.y, Constants.solutionCandidate));
-      }
+      this.drawPath(currentTile);
       this._open.splice(this._open.indexOf(currentTile), 1);
 
       if (currentTile.x == this._end.x && currentTile.y == this._end.y) {
@@ -69,6 +67,12 @@ export class AStarService {
     this.markSolution();
   }
 
+
+  private drawPath(currentTile) {
+    if (!this.isStartPoint(currentTile) && !this.isEndPoint(currentTile)) {
+      this._tiles$.next(new Tile(currentTile.x, currentTile.y, Constants.solutionCandidate));
+    }
+  }
 
   private isStartPoint(t: AStarTile) {
     return this.isSameTile(t, this._start);
@@ -128,8 +132,6 @@ export class AStarService {
             this._open.push(neighbour);
           }
         } catch (e) {
-          // debugger;
-          //TODO
           // ignore ArrayIndexOutOfBounds
         }
       }

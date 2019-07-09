@@ -99,9 +99,10 @@ export class PrimService {
   private initializeMap() {
     this._map = {};
     this._maze = new Maze(this._map);
-    for (let x = 0; x < this._width / this._scaleFactor; x++) {
+    // add one more tile, so we always have a wall at each end
+    for (let x = 0; x < this._width / this._scaleFactor + 1; x++) {
       this._map[x] = {};
-      for (let y = 0; y < this._height / this._scaleFactor; y++) {
+      for (let y = 0; y < this._height / this._scaleFactor + 1; y++) {
         this._map[x][y] = Constants.wall;
       }
     }
@@ -136,9 +137,14 @@ export class PrimService {
   }
 
   private generateStart(c, r) {
+    // add odd starting coordinates, so we always have a wall at each end
+    let x = Math.floor(Math.random() * c);
+    x = x % 2 === 0 ? x + 1 : x;
+    let y = Math.floor(Math.random() * r);
+    y = y % 2 === 0 ? y + 1 : y;
     const start = <Point> {
-      x: Math.floor(Math.random() * c),
-      y: Math.floor(Math.random() * r)
+      x: x,
+      y: y
     };
 
     this._map[start.x][start.y] = Constants.start;
