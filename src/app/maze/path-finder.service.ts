@@ -35,7 +35,7 @@ export class PathFinderService {
       console.error('Needs a maze');
       return;
     }
-    this._start = maze.start;
+    this._start = maze.generateCities;
     this._end = maze.end;
     this._map = maze.map;
 

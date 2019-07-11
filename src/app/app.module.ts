@@ -7,12 +7,16 @@ import {MazeComponent} from './maze/maze.component';
 import {CanvasComponent} from './maze/canvas/canvas.component';
 import {MaterialModule} from './shared/material.module';
 import {FormsModule} from '@angular/forms';
+import {TravelingSalesmanComponent} from './traveling-salesman/traveling-salesman.component';
+import {StartComponent} from './start/start.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MazeComponent,
-    CanvasComponent
+    CanvasComponent,
+    TravelingSalesmanComponent,
+    StartComponent
   ],
   imports: [
     BrowserModule,

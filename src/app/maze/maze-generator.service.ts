@@ -150,7 +150,7 @@ export class MazeGeneratorService {
     this._map[start.x][start.y] = Constants.start;
     let startTile = new Tile(start.x, start.y, Constants.start);
     this._tiles.next(startTile);
-    this._maze.start = startTile;
+    this._maze.generateCities = startTile;
 
     console.log(`Generating start point: (${start.x}, ${start.y})`);
     return start;

@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.main {
+  flex: 1
+}
+
+footer {
+  background: #3b3837;
+  color: white;
+  font-size: 0.75em;
+  padding: 1em;
+
+  a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+  }
+}
