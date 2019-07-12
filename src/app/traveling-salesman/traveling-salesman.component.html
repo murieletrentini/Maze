@@ -5,12 +5,11 @@
         [attr.x2]="path.endX" [attr.y2]="path.endY" stroke="#8400ff" stroke-width="2"></line>
 
 </svg>
-<div>
-  <p *ngFor="let p of progression">{{p.distance}} ({{p.fitness}})</p>
-</div>
-<div class="custom-slider">
-  <label>Delay</label>
-  <ng5-slider [(value)]="delay" [options]="delayOptions"></ng5-slider>
+<div class="input-bar">
+  <div class="custom-slider">
+    <label>Delay</label>
+    <ng5-slider [(value)]="delay" [options]="delayOptions"></ng5-slider>
+  </div>
 </div>
 <div class="button-bar">
   <button mat-flat-button (click)="generateCities()">
@@ -21,4 +20,7 @@
     <mat-icon aria-hidden="false" aria-label="Example home icon">timeline</mat-icon>
     Solve
   </button>
+</div>
+<div>
+  <p *ngFor="let p of progression">{{p.distance}} ({{p.fitness}})</p>
 </div>

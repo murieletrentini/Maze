@@ -16,17 +16,21 @@ Number.prototype.between = function(start: number, end: number): boolean {
 })
 export class GeneticAlgorithmService {
 
-  private _cities: City[];
   private _cities$ = new Subject<City[]>();
   private _fittest$ = new Subject<Individual>();
-  private _fittest: Individual[] = [];
-  private _population: Individual[];
 
-  private _populationSize = 500;
-  private _eliteSize = 20;
-  private _parentPopulationSize = 50;
-  private _generations = 50;
+  private _cities: City[];
+  private _population: Individual[];
+  private _shortestDistanceEver = Number.MAX_SAFE_INTEGER;
+  private _shortestDistanceCurrent: number;
+
+  private _populationSize = 1000;
+  private _eliteSize = 100;
+  private _parentPopulationSize = 200;
+  private _generations = 100;
   private _mutationRate = 0.5;
+  private _maxCountNoImprovement = 5;
+  private _countNoImprovement = 0;
 
   constructor() {
   }
@@ -41,12 +45,11 @@ export class GeneticAlgorithmService {
 
   run() {
     this.generateInitialPopulation();
-
     let count = 0;
     while (count++ < this._generations && this.stillImproving()) {
       this.calculateFitness();
       this._population.sort((i1, i2) => i2.fitness - i1.fitness);
-      this._fittest.push(this._population[0]);
+      this._shortestDistanceCurrent = this._population[0].distance;
       this._fittest$.next(this._population[0]);
       const parents = this.parentSelection();
       this.breeding(parents);
@@ -55,6 +58,8 @@ export class GeneticAlgorithmService {
 
   generateCities(width: number, height: number, cityCount: number) {
     this._cities = [];
+    this._population = [];
+    this._shortestDistanceEver = Number.MAX_SAFE_INTEGER;
     this._cities$.next([]);
     for (let i = 0; i < cityCount; i++) {
       const x = getRandomInt(width);
@@ -118,9 +123,6 @@ export class GeneticAlgorithmService {
     while (nextPopulation.length < this._populationSize) {
       const p1 = parents[getRandomInt(parents.length - 1)];
       const p2 = parents[getRandomInt(parents.length - 1)];
-      if (!p1 || !p2) {
-        debugger;
-      }
       const child = new Individual();
       child.cities = this.crossOver(p1, p2);
       this.mutate(child);
@@ -164,13 +166,15 @@ export class GeneticAlgorithmService {
     }
   }
 
-  private stillImproving() {
-    if (this._fittest.length < 3) {
+  private stillImproving(): boolean {
+    if (this._shortestDistanceCurrent < this._shortestDistanceEver) {
+      this._shortestDistanceEver = this._shortestDistanceCurrent;
+      this._countNoImprovement = 0;
       return true;
+    } else if (this._shortestDistanceCurrent === this._shortestDistanceEver) {
+      this._countNoImprovement++;
     }
-    let childFitness = this._fittest[this._fittest.length - 1].fitness;
-    let grandfatherFitness = this._fittest[this._fittest.length - 3].fitness;
-    return childFitness > grandfatherFitness;
+    return this._countNoImprovement < this._maxCountNoImprovement;
   }
 }
 

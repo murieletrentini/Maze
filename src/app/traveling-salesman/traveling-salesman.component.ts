@@ -19,25 +19,27 @@ export class TravelingSalesmanComponent implements OnInit {
   progression: Individual[] = [];
   paths: Path[];
   delayOptions: Options = {
-    floor: 0,
-    ceil: 100,
+    floor: 100,
+    ceil: 5000,
   };
-  delay = 15000;
+  delay = 500;
 
   constructor(private geneticAlgorithm: GeneticAlgorithmService) {
   }
 
   ngOnInit() {
     this.cities$ = this.geneticAlgorithm.cities$();
+    const now = Date.now();
     this.geneticAlgorithm.fittest$()
       .pipe(
-        concatMap(tile => of(tile).pipe(delay(this.delay))),
+        concatMap(fittest => of(fittest).pipe(delay(this.delay))),
       )
-      .subscribe(fittest => {
-        this.fittest = fittest;
-        this.progression.push(fittest);
+      .subscribe(delayedFittest => {
+        console.log(Date.now() - now);
+        this.fittest = delayedFittest;
+        this.progression.push(delayedFittest);
         this.paths = [];
-        let cities = fittest.cities;
+        let cities = delayedFittest.cities;
         for (let i = 0; i < cities.length; i++) {
           const nextIndex = i == cities.length - 1 ? 0 : i + 1;
           this.paths.push(new Path(cities[i].x, cities[i].y, cities[nextIndex].x, cities[nextIndex].y));
@@ -47,7 +49,7 @@ export class TravelingSalesmanComponent implements OnInit {
 
   generateCities() {
     this.paths = [];
-    this.geneticAlgorithm.generateCities(this.width, this.height, 10);
+    this.geneticAlgorithm.generateCities(this.width, this.height, 50);
   }
 
   run() {
