@@ -1,0 +1,25 @@
+<ngx-charts-line-chart *ngIf="data[0].series.length > 0"
+                       [view]="options.view"
+                       [scheme]="options.colorScheme"
+                       [results]="data"
+                       [xAxis]="options.showXAxis"
+                       [yAxis]="options.showYAxis"
+                       [xAxisLabel]="options.xAxisLabel"
+                       [yAxisLabel]="options.yAxisLabel"
+                       [gradient]="options.gradient"
+                       [autoScale]="options.autoScale"
+                       [timeline]="options.timeline"
+                       [legend]="options.showLegend"
+                       [showXAxisLabel]="options.showXAxisLabel"
+                       [showYAxisLabel]="options.showYAxisLabel"
+                       (select)="onSelect($event)"
+>
+</ngx-charts-line-chart>
+<!--<ngx-charts-bar-vertical-->
+
+
+<!--  [legend]="showLegend"-->
+<!--  [showXAxisLabel]="showXAxisLabel"-->
+<!--  [showYAxisLabel]="showYAxisLabel"-->
+<!--  (select)="onSelect($event)">-->
+<!--</ngx-charts-bar-vertical>-->

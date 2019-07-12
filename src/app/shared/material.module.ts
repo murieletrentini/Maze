@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatIconModule, MatInputModule, MatRadioModule} from '@angular/material';
 import {Ng5SliderModule} from 'ng5-slider';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 const MODULES = [
   BrowserAnimationsModule,
@@ -9,7 +10,8 @@ const MODULES = [
   MatInputModule,
   MatIconModule,
   MatRadioModule,
-  Ng5SliderModule
+  Ng5SliderModule,
+  NgxChartsModule
 ];
 
 @NgModule({

@@ -9,6 +9,7 @@ import {MaterialModule} from './shared/material.module';
 import {FormsModule} from '@angular/forms';
 import {TravelingSalesmanComponent} from './traveling-salesman/traveling-salesman.component';
 import {StartComponent} from './start/start.component';
+import {ChartComponent} from './traveling-salesman/chart/chart.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {StartComponent} from './start/start.component';
     MazeComponent,
     CanvasComponent,
     TravelingSalesmanComponent,
-    StartComponent
+    StartComponent,
+    ChartComponent
   ],
   imports: [
     BrowserModule,
