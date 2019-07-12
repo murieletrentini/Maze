@@ -13,13 +13,13 @@ export class MazeGeneratorService {
   private _scaleFactor: number;
   private _height: number;
 
-  private _tiles: Subject<Tile> = new Subject();
+  private _tiles$: Subject<Tile> = new Subject();
 
   constructor() {
   }
 
   tiles$(): Observable<Tile> {
-    return this._tiles.asObservable();
+    return this._tiles$.asObservable();
   }
 
   getMaze(): any {
@@ -27,7 +27,7 @@ export class MazeGeneratorService {
   }
 
   reset() {
-    this._tiles = new Subject();
+    this._tiles$ = new Subject();
     this.initializeMap();
   }
 
@@ -68,9 +68,9 @@ export class MazeGeneratorService {
 
             // open path between the nodes
             this._map[cu.x][cu.y] = Constants.path;
-            this._tiles.next(new Tile(cu.x, cu.y, Constants.path));
+            this._tiles$.next(new Tile(cu.x, cu.y, Constants.path));
             this._map[op.x][op.y] = Constants.path;
-            this._tiles.next(new Tile(op.x, op.y, Constants.path));
+            this._tiles$.next(new Tile(op.x, op.y, Constants.path));
 
             // store last tile in order to mark it later
             last = op;
@@ -85,15 +85,17 @@ export class MazeGeneratorService {
 
       // if algorithm has resolved, mark end point
       if (frontier.size == 0) {
+        last.x = last.x == c ? c - 1 : last.x;
+        last.y = last.y == r ? r - 1 : last.y;
         this._map[last.x][last.y] = Constants.end;
         let endTile = new Tile(last.x, last.y, Constants.end);
-        this._tiles.next(endTile);
+        this._tiles$.next(endTile);
         this._maze.end = endTile;
         // this.draw();
         console.log(`Marking end point: (${last.x}, ${last.y})`);
       }
     }
-    this._tiles.complete();
+    this._tiles$.complete();
   }
 
   private initializeMap() {
@@ -149,7 +151,7 @@ export class MazeGeneratorService {
 
     this._map[start.x][start.y] = Constants.start;
     let startTile = new Tile(start.x, start.y, Constants.start);
-    this._tiles.next(startTile);
+    this._tiles$.next(startTile);
     this._maze.generateCities = startTile;
 
     console.log(`Generating start point: (${start.x}, ${start.y})`);
