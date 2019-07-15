@@ -1,10 +1,13 @@
-<svg [attr.viewBox]="viewBox" id="svg">
-  <circle *ngFor="let city of cities$ | async" [attr.cx]="city.x" [attr.cy]="city.y" r="4" stroke="none"
-          fill="white"></circle>
-  <line *ngFor="let path of paths" [attr.x1]="path.startX" [attr.y1]="path.startY"
-        [attr.x2]="path.endX" [attr.y2]="path.endY" stroke="#8400ff" stroke-width="2"></line>
+<div class="view-bar">
+  <svg [attr.viewBox]="viewBox" id="svg">
+    <circle *ngFor="let city of cities$ | async" [attr.cx]="city.x" [attr.cy]="city.y" r="4" stroke="none"
+            fill="white"></circle>
+    <line *ngFor="let path of paths" [attr.x1]="path.startX" [attr.y1]="path.startY"
+          [attr.x2]="path.endX" [attr.y2]="path.endY" stroke="#8400ff" stroke-width="2"></line>
 
-</svg>
+  </svg>
+  <app-chart id="chart" #chart></app-chart>
+</div>
 <div class="input-bar">
   <div class="custom-slider">
     <label>Delay</label>
@@ -13,12 +16,19 @@
 </div>
 <div class="button-bar">
   <button mat-flat-button (click)="generateCities()">
-    <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon>
+    <mat-icon aria-hidden="false">scatter_plot</mat-icon>
     Generate Cities
   </button>
+  <button mat-flat-button (click)="generateCircularCities()">
+    <mat-icon aria-hidden="false">filter_tilt_shift</mat-icon>
+    Generate circular city layout
+  </button>
   <button mat-flat-button (click)="run()">
-    <mat-icon aria-hidden="false" aria-label="Example home icon">timeline</mat-icon>
+    <mat-icon aria-hidden="false">timeline</mat-icon>
     Solve
   </button>
+  <button mat-flat-button (click)="openBottomSheet()">
+    <mat-icon aria-hidden="false">settings</mat-icon>
+    Advanced Settings
+  </button>
 </div>
-<app-chart #chart></app-chart>

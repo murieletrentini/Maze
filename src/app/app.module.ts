@@ -10,6 +10,7 @@ import {FormsModule} from '@angular/forms';
 import {TravelingSalesmanComponent} from './traveling-salesman/traveling-salesman.component';
 import {StartComponent} from './start/start.component';
 import {ChartComponent} from './traveling-salesman/chart/chart.component';
+import {SettingsComponent} from './traveling-salesman/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -18,8 +19,10 @@ import {ChartComponent} from './traveling-salesman/chart/chart.component';
     CanvasComponent,
     TravelingSalesmanComponent,
     StartComponent,
-    ChartComponent
+    ChartComponent,
+    SettingsComponent
   ],
+  entryComponents:  [SettingsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

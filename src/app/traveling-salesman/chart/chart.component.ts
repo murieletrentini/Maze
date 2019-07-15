@@ -28,18 +28,26 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.data = [
-      {
-        name: 'Fittest',
-        series: []
-      }
-    ];
+    this.initData();
   }
 
   addData(distance: number, generation: number) {
     this.data[0].series.push({name: generation, value: distance});
     // kick angular change detection
     this.data = [...this.data];
+  }
+
+  clearData() {
+    this.initData();
+  }
+
+  private initData() {
+    this.data = [
+      {
+        name: 'Fittest',
+        series: []
+      }
+    ];
   }
 
   onSelect($event: any) {

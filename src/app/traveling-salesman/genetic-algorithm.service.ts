@@ -24,11 +24,12 @@ export class GeneticAlgorithmService {
   private _shortestDistanceEver = Number.MAX_SAFE_INTEGER;
   private _shortestDistanceCurrent: number;
 
-  private _populationSize = 1000;
-  private _eliteSize = 100;
-  private _parentPopulationSize = 200;
-  private _generations = 100;
-  private _mutationRate = 0.5;
+  cityCount = 25;
+  generations = 100;
+  populationSize = 1000;
+  mutationRate = 0.5;
+  eliteSize = Math.floor(1 / 100 * this.populationSize);
+  private _parentPopulationSize = 1 / 5 * this.populationSize;
   private _maxCountNoImprovement = 5;
   private _countNoImprovement = 0;
 
@@ -46,7 +47,7 @@ export class GeneticAlgorithmService {
   run() {
     this.generateInitialPopulation();
     let count = 0;
-    while (count++ < this._generations && this.stillImproving()) {
+    while (count++ < this.generations && this.stillImproving()) {
       this.calculateFitness();
       this._population.sort((i1, i2) => i2.fitness - i1.fitness);
       this._shortestDistanceCurrent = this._population[0].distance;
@@ -56,22 +57,43 @@ export class GeneticAlgorithmService {
     }
   }
 
-  generateCities(width: number, height: number, cityCount: number) {
+  generateCities(width: number, height: number, circular: boolean) {
     this._cities = [];
     this._population = [];
     this._shortestDistanceEver = Number.MAX_SAFE_INTEGER;
     this._cities$.next([]);
-    for (let i = 0; i < cityCount; i++) {
-      const x = getRandomInt(width);
-      const y = getRandomInt(height);
-      this._cities.push(new City(x, y));
+    this._fittest$.next(new Individual());
+    if (circular) {
+      this.circularCityLayout(width, height);
+    } else {
+      this.randomCityLayout(width, height);
     }
     this._cities$.next(this._cities);
   }
 
+  private randomCityLayout(width: number, height: number) {
+    for (let i = 0; i < this.cityCount; i++) {
+      const x = getRandomInt(width - 8) + 4; // account for city circle size (r = 4)
+      const y = getRandomInt(height - 8) + 4;
+      this._cities.push(new City(x, y));
+    }
+  }
+
+  private circularCityLayout(width: number, height: number) {
+    const r = (2 * height) / 5;
+
+    for (let i = 0; i < this.cityCount; i++) {
+
+      const angle = (i + 1) / this.cityCount * Math.PI * 2;
+      const x = Math.cos(angle) * r;
+      const y = Math.sin(angle) * r;
+      this._cities.push(new City(x + width / 2, y + height / 2));
+    }
+  }
+
   private generateInitialPopulation() {
     this._population = [];
-    for (let i = 0; i < this._populationSize; i++) {
+    for (let i = 0; i < this.populationSize; i++) {
       const individual = new Individual();
       individual.cities = this.shuffleArray(this._cities);
       individual.calculateDistance();
@@ -95,7 +117,7 @@ export class GeneticAlgorithmService {
   private parentSelection(): Individual[] {
     const parents = [];
     // elitism
-    for (let i = 0; i < this._eliteSize; i++) {
+    for (let i = 0; i < this.eliteSize; i++) {
       parents.push(this._population[i]);
     }
 
@@ -120,7 +142,7 @@ export class GeneticAlgorithmService {
   private breeding(parents: Individual[]) {
     const nextPopulation = [];
 
-    while (nextPopulation.length < this._populationSize) {
+    while (nextPopulation.length < this.populationSize) {
       const p1 = parents[getRandomInt(parents.length - 1)];
       const p2 = parents[getRandomInt(parents.length - 1)];
       const child = new Individual();
@@ -159,7 +181,7 @@ export class GeneticAlgorithmService {
    * Uses displacement mutation
    */
   private mutate(child: Individual): void {
-    if (Math.random() <= this._mutationRate) {
+    if (Math.random() <= this.mutationRate) {
       const index = getRandomInt(child.cities.length - 1);
       const mutation = child.cities.splice(index);
       child.cities.push(...mutation);
@@ -191,7 +213,7 @@ export class City {
 }
 
 export class Individual {
-  cities: City[];
+  cities: City[] = [];
   distance: number;
   fitness: number;
   proportionalFitness: number;

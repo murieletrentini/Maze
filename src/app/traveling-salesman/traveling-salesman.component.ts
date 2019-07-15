@@ -4,6 +4,8 @@ import {Observable, of} from 'rxjs';
 import {concatMap, delay} from 'rxjs/operators';
 import {Options} from 'ng5-slider';
 import {ChartComponent} from './chart/chart.component';
+import {MatBottomSheet} from '@angular/material';
+import {SettingsComponent} from './settings/settings.component';
 
 @Component({
   selector: 'app-traveling-salesman',
@@ -26,7 +28,8 @@ export class TravelingSalesmanComponent implements OnInit {
   };
   delay = 500;
 
-  constructor(private geneticAlgorithm: GeneticAlgorithmService) {
+  constructor(private geneticAlgorithm: GeneticAlgorithmService,
+              private bottomSheet: MatBottomSheet) {
   }
 
   ngOnInit() {
@@ -37,7 +40,12 @@ export class TravelingSalesmanComponent implements OnInit {
       )
       .subscribe(delayedFittest => {
         this.progression.push(delayedFittest);
-        this.chart.addData(delayedFittest.distance, this.progression.length);
+        if (delayedFittest.distance > 0) {
+          this.chart.addData(delayedFittest.distance, this.progression.length);
+        } else {
+          this.progression = [];
+          this.chart.clearData();
+        }
         this.paths = [];
         let cities = delayedFittest.cities;
         for (let i = 0; i < cities.length; i++) {
@@ -49,11 +57,19 @@ export class TravelingSalesmanComponent implements OnInit {
 
   generateCities() {
     this.paths = [];
-    this.geneticAlgorithm.generateCities(this.width, this.height, 50);
+    this.geneticAlgorithm.generateCities(this.width, this.height, false);
   }
 
   run() {
     this.geneticAlgorithm.run();
+  }
+
+  generateCircularCities() {
+    this.geneticAlgorithm.generateCities(this.width, this.height, true);
+  }
+
+  openBottomSheet() {
+    this.bottomSheet.open(SettingsComponent);
   }
 }
 
