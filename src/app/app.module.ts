@@ -11,6 +11,7 @@ import {TravelingSalesmanComponent} from './traveling-salesman/traveling-salesma
 import {StartComponent} from './start/start.component';
 import {ChartComponent} from './traveling-salesman/chart/chart.component';
 import {SettingsComponent} from './traveling-salesman/settings/settings.component';
+import {RandomnessComponent} from './paint-splatter/randomness.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {SettingsComponent} from './traveling-salesman/settings/settings.componen
     TravelingSalesmanComponent,
     StartComponent,
     ChartComponent,
-    SettingsComponent
+    SettingsComponent,
+    RandomnessComponent
   ],
   entryComponents:  [SettingsComponent],
   imports: [

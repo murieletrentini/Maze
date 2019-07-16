@@ -1,0 +1,25 @@
+<div class="view-bar">
+  <svg [attr.viewBox]="viewBox" id="svg">
+    <ng-container *ngIf="currentView == 'splatter'">
+      <circle *ngFor="let splatter of splatters" [attr.cx]="splatter.x" [attr.cy]="splatter.y" [attr.r]="splatter.r"
+              stroke="none"
+              [attr.fill]="splatter.color"></circle>
+    </ng-container>
+    <ng-container *ngIf="currentView == 'noise'">
+      <circle *ngFor="let splatter of noise" [attr.cx]="splatter.x" [attr.cy]="splatter.y" [attr.r]="splatter.r"
+              stroke="none"
+              [attr.fill]="splatter.color"></circle>
+    </ng-container>
+    <polygon points="0,0 10,10 0,10" style="fill:lime;stroke:purple;stroke-width:1" ></polygon>
+  </svg>
+</div>
+<div class="button-bar">
+  <button (click)="generatePaintSplatter()" mat-flat-button>
+    <mat-icon aria-hidden="false" aria-label="Example home icon">blur_on</mat-icon>
+    Paint Splatter
+  </button>
+  <button (click)="generateNoise()" mat-flat-button>
+    <mat-icon aria-hidden="false" aria-label="Example home icon">scatter_plot</mat-icon>
+    Noise
+  </button>
+</div>
