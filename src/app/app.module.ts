@@ -11,7 +11,7 @@ import {TravelingSalesmanComponent} from './traveling-salesman/traveling-salesma
 import {StartComponent} from './start/start.component';
 import {ChartComponent} from './traveling-salesman/chart/chart.component';
 import {SettingsComponent} from './traveling-salesman/settings/settings.component';
-import {RandomnessComponent} from './paint-splatter/randomness.component';
+import {RandomnessComponent} from './randomness/randomness.component';
 
 @NgModule({
   declarations: [

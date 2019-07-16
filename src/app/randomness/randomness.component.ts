@@ -64,21 +64,17 @@ export class RandomnessComponent implements OnInit {
 
     let xOffset = 0.0;
 
-    let positionOffset = 0.5;
+    let positionOffset = 1;
 
     for (let x = -this.width / 2; x < this.width / 2; x += positionOffset) {
       let yOffset = 0.0;
 
       for (let y = -this.height / 2; y < this.height / 2; y += positionOffset) {
-        // const r = Math.floor((openSimplex.noise2D(x, y) + 1) * 128);
-        // const g = Math.floor((openSimplex.noise2D(x + 1, y) + 1) * 128);
-        // const b = Math.floor((openSimplex.noise2D(x + 2, y) + 1) * 128);
-        // const hex = '#' + r.toString(16) + g.toString(16) + b.toString(16);
-        // console.log(hex);
-        // this.noise.push(new Splatter(x, y, 2, hex));
-        const brightness = Math.floor(openSimplex.noise2D(xOffset, yOffset) * 255);
-        const hex = '#ffffff' + brightness.toString(16);
-        this.noise.push(new Splatter(x, y, positionOffset / 2, hex));
+        const r = Math.floor((openSimplex.noise2D(x, y) + 1) * 128);
+        const g = Math.floor((openSimplex.noise2D(x + 1, y) + 1) * 128);
+        const b = Math.floor((openSimplex.noise2D(x + 2, y) + 1) * 128);
+        const hex = '#' + r.toString(16) + g.toString(16) + b.toString(16);
+        this.noise.push(new Splatter(x, y, positionOffset/2, hex));
 
         yOffset += 0.01;
       }
