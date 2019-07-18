@@ -69,38 +69,40 @@ export class Landscape {
 export class Mover2D {
   location: p5.Vector;
   velocity: p5.Vector;
+  acceleration: p5.Vector;
 
-  constructor(public form: string, public size: number) {
+  private topSpeed = 10;
+
+  constructor(private context: p5, public form: string, public width: number, public height: number = width) {
 
   }
 
   update() {
+    let mouse = this.context.createVector(this.context.mouseX, this.context.mouseY);
+    let dir = p5.Vector.sub(mouse, this.location);
+    dir.normalize();
+    dir.mult(0.05);
+
+    this.acceleration = dir;
+    this.velocity.add(this.acceleration);
+    this.velocity.limit(this.topSpeed);
     this.location.add(this.velocity);
   }
 
-  checkEdges(width: number, height: number) {
-    if ((this.location.x > width - this.size / 2) || (this.location.x < this.size / 2)) {
+  checkEdges() {
+    if ((this.location.x > this.context.width - this.width / 2) || (this.location.x < this.width / 2)) {
       this.velocity.x = this.velocity.x * -1;
     }
-    if ((this.location.y > height - this.size / 2) || (this.location.y < this.size / 2)) {
+    if ((this.location.y > this.context.height - this.height / 2) || (this.location.y < this.height / 2)) {
       this.velocity.y = this.velocity.y * -1;
     }
   }
 
-  display(p5: p5, backgroundColor, strokeColor: string, fillColor: string) {
-    p5.background(backgroundColor);
-    p5.stroke(strokeColor);
-    p5.fill(fillColor);
-    switch (this.form) {
-      case  'ellipse':
-        p5.ellipse(this.location.x, this.location.y, this.size);
-        break;
-      case 'circle':
-        p5.circle(this.location.x, this.location.y, this.size);
-        break;
-      default:
-        p5.circle(this.location.x, this.location.y, this.size);
-    }
+  display(backgroundColor, strokeColor: string, fillColor: string) {
+    this.context.background(backgroundColor);
+    this.context.stroke(strokeColor);
+    this.context.fill(fillColor);
+    this.context[this.form](this.location.x, this.location.y, this.width);
   }
 
 }

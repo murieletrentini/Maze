@@ -27,29 +27,29 @@ export class NatureOfCodeComponent implements OnInit {
 
   }
 
-  reset(_p5: p5, use3D: boolean) {
+  reset(context: p5, use3D: boolean) {
     this.p5.noLoop();
     this.p5.noCanvas();
     if (use3D) {
-      _p5.createCanvas(this.width, this.height, _p5.WEBGL).parent('canvas');
+      context.createCanvas(this.width, this.height, context.WEBGL).parent('canvas');
     } else {
-      _p5.createCanvas(this.width, this.height).parent('canvas');
+      context.createCanvas(this.width, this.height).parent('canvas');
     }
   }
 
   createClouds() {
-    const sketch = (_p5: p5) => {
-      _p5.preload = () => {
+    const sketch = (context: p5) => {
+      context.preload = () => {
         this.width = window.innerWidth;
       };
 
-      _p5.setup = () => {
-        this.reset(_p5, false);
+      context.setup = () => {
+        this.reset(context, false);
       };
 
-      _p5.draw = () => {
-        this.perlinNoise(_p5);
-        _p5.noLoop();
+      context.draw = () => {
+        this.perlinNoise(context);
+        context.noLoop();
       };
     };
 
@@ -57,9 +57,9 @@ export class NatureOfCodeComponent implements OnInit {
   }
 
 
-  private perlinNoise(_p5: p5) {
-    _p5.loadPixels();
-    let img = _p5.createImage(this.width, this.height);
+  private perlinNoise(context: p5) {
+    context.loadPixels();
+    let img = context.createImage(this.width, this.height);
     img.loadPixels();
     let xOff = 0.0;
 
@@ -67,38 +67,38 @@ export class NatureOfCodeComponent implements OnInit {
       let yOff = 0.0;
 
       for (let y = 0; y < this.height; y++) {
-        let bright = _p5.map(_p5.noise(xOff, yOff), 0, 1, 0, 255);
-        _p5.set(x, y, _p5.color(bright));
+        let bright = context.map(context.noise(xOff, yOff), 0, 1, 0, 255);
+        context.set(x, y, context.color(bright));
         yOff += 0.01;
       }
       xOff += 0.01;
     }
-    _p5.updatePixels();
+    context.updatePixels();
   }
 
   createHeightMap() {
-    const sketch = (_p5: p5) => {
-      _p5.preload = () => {
+    const sketch = (context: p5) => {
+      context.preload = () => {
         this.width = 400;
       };
 
-      _p5.setup = () => {
-        this.reset(_p5, true);
-        this.land = new Landscape(20, this.width, this.height, _p5);
+      context.setup = () => {
+        this.reset(context, true);
+        this.land = new Landscape(20, this.width, this.height, context);
         this.land.calculate();
       };
 
       /**
        * Continuously executed until the program is stopped
        */
-      _p5.draw = () => {
-        _p5.background(this.backgroundColor);
-        _p5.push();
-        _p5.translate(this.width / 10, this.height / 10, -500);
-        _p5.rotateX(Math.PI / 3);
-        _p5.rotateZ(this.theta);
+      context.draw = () => {
+        context.background(this.backgroundColor);
+        context.push();
+        context.translate(this.width / 10, this.height / 10, -500);
+        context.rotateX(Math.PI / 3);
+        context.rotateZ(this.theta);
         this.land.render();
-        _p5.pop();
+        context.pop();
 
         this.theta += 0.0025;
       };
@@ -112,22 +112,22 @@ export class NatureOfCodeComponent implements OnInit {
     let velocity;
     let ballSize = 16;
 
-    const sketch = (_p5: p5) => {
-      _p5.preload = () => {
+    const sketch = (context: p5) => {
+      context.preload = () => {
         this.width = window.innerWidth;
       };
 
-      _p5.setup = () => {
-        this.reset(_p5, true);
-        location = _p5.createVector(100, 100, 100);
-        velocity = _p5.createVector(2.5, 5, 7.5);
+      context.setup = () => {
+        this.reset(context, true);
+        location = context.createVector(100, 100, 100);
+        velocity = context.createVector(2.5, 5, 7.5);
       };
 
       /**
        * Continuously executed until the program is stopped
        */
-      _p5.draw = () => {
-        _p5.background(this.backgroundColor);
+      context.draw = () => {
+        context.background(this.backgroundColor);
 
         location.add(velocity);
         if ((location.x > this.width - ballSize / 2) || (location.x < ballSize / 2)) {
@@ -140,12 +140,10 @@ export class NatureOfCodeComponent implements OnInit {
           velocity.z = velocity.z * -1;
         }
 
-        // _p5.noStroke();
-        // _p5.fill('#ffffff');
-        _p5.push();
-        _p5.translate(location.x - 500, location.y - 200, location.z - 500);
-        _p5.sphere(ballSize);
-        _p5.pop();
+        context.push();
+        context.translate(location.x - 500, location.y - 200, location.z - 500);
+        context.sphere(ballSize);
+        context.pop();
       };
     };
 
@@ -153,27 +151,30 @@ export class NatureOfCodeComponent implements OnInit {
   }
 
   bounceBall() {
-    const ball = new Mover2D('circle', 16);
+    let ball: Mover2D;
+    let ballSize = 16;
     const color = '#FFFFFF';
 
-    const sketch = (_p5: p5) => {
-      _p5.preload = () => {
+    const sketch = (context: p5) => {
+      context.preload = () => {
         this.width = window.innerWidth;
+        ball = new Mover2D(context, 'circle', ballSize);
       };
 
-      _p5.setup = () => {
-        this.reset(_p5, false);
-        ball.location = _p5.createVector(100, 100);
-        ball.velocity = _p5.createVector(2.5, 5);
+      context.setup = () => {
+        this.reset(context, false);
+        ball.location = context.createVector(this.width / 2, this.height / 2);
+        ball.velocity = context.createVector(0,0);
+        ball.acceleration = context.createVector(0.1,0.01);
       };
 
       /**
        * Continuously executed until the program is stopped
        */
-      _p5.draw = () => {
+      context.draw = () => {
         ball.update();
-        ball.checkEdges(this.width, this.height);
-        ball.display(_p5, this.backgroundColor, color, color);
+        ball.checkEdges();
+        ball.display(this.backgroundColor, color, color);
       };
     };
 
