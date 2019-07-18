@@ -17,7 +17,13 @@ Number.prototype.between = function(start: number, end: number): boolean {
 export class GeneticAlgorithmService {
 
   private _cities$ = new Subject<City[]>();
+  get cities$(): Observable<City[]> {
+    return this._cities$.asObservable();
+  }
   private _fittest$ = new Subject<Individual>();
+  get fittest$(): Observable<Individual> {
+    return this._fittest$.asObservable();
+  }
 
   private _cities: City[];
   private _population: Individual[];
@@ -34,14 +40,6 @@ export class GeneticAlgorithmService {
   private _countNoImprovement = 0;
 
   constructor() {
-  }
-
-  cities$(): Observable<City[]> {
-    return this._cities$.asObservable();
-  }
-
-  fittest$(): Observable<Individual> {
-    return this._fittest$.asObservable();
   }
 
   run() {

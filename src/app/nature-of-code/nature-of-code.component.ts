@@ -6,15 +6,17 @@ import {Landscape} from './model';
 
 @Component({
   selector: 'app-ps5',
-  templateUrl: './ps5.component.html',
-  styleUrls: ['./ps5.component.sass']
+  templateUrl: './nature-of-code.component.html',
+  styleUrls: ['./nature-of-code.component.sass']
 })
-export class Ps5Component implements OnInit {
+export class NatureOfCodeComponent implements OnInit {
   private width = 400;
   private height = 400;
   private theta = 0;
   private p5: p5;
   private land: Landscape;
+
+  private backgroundColor = '#979797';
 
   constructor() {
   }
@@ -38,12 +40,12 @@ export class Ps5Component implements OnInit {
       _p5.draw = () => {
         this.perlinNoise(_p5);
         _p5.noLoop();
-        console.log('draw clouds');
       };
     };
 
     this.p5 = new p5(sketch);
   }
+
 
   private perlinNoise(s) {
     s.loadPixels();
@@ -55,7 +57,7 @@ export class Ps5Component implements OnInit {
       let yOff = 0.0;
 
       for (let y = 0; y < this.height; y++) {
-        let bright = s.map(s.noise(xOff, yOff), 0, 1, 0, 255); //[bold]
+        let bright = s.map(s.noise(xOff, yOff), 0, 1, 0, 255);
         s.set(x, y, s.color(bright));
         yOff += 0.01;
       }
@@ -63,7 +65,6 @@ export class Ps5Component implements OnInit {
     }
     s.updatePixels();
   }
-
 
   reset(_p5, use3D: boolean) {
     this.p5.noCanvas();
@@ -90,7 +91,7 @@ export class Ps5Component implements OnInit {
        * Continuously executed until the program is stopped
        */
       _p5.draw = () => {
-        _p5.background('#979797');
+        _p5.background(this.backgroundColor);
         _p5.push();
         _p5.translate(this.width / 10, this.height / 10, -500);
         _p5.rotateX(Math.PI / 3);
@@ -125,7 +126,7 @@ export class Ps5Component implements OnInit {
        * Continuously executed until the program is stopped
        */
       _p5.draw = () => {
-        _p5.background('#979797');
+        _p5.background(this.backgroundColor);
 
         location.add(velocity);
         if ((location.x > this.width - ballSize / 2) || (location.x < ballSize / 2)) {

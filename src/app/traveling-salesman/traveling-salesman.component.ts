@@ -33,8 +33,8 @@ export class TravelingSalesmanComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cities$ = this.geneticAlgorithm.cities$();
-    this.geneticAlgorithm.fittest$()
+    this.cities$ = this.geneticAlgorithm.cities$;
+    this.geneticAlgorithm.fittest$
       .pipe(
         concatMap(fittest => of(fittest).pipe(delay(this.delay))),
       )
