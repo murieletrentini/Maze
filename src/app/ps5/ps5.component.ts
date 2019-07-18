@@ -26,10 +26,6 @@ export class Ps5Component implements OnInit {
   createClouds() {
     const sketch = (_p5) => {
 
-      _p5.preload = () => {
-        // preload code
-      };
-
       _p5.setup = () => {
         this.reset(_p5);
       };
@@ -48,23 +44,17 @@ export class Ps5Component implements OnInit {
     s.loadPixels();
     let img = s.createImage(this.width, this.height);
     img.loadPixels();
-    // Start xoff at 0.
-    let xoff = 0.0; //[bold]
+    let xOff = 0.0;
 
     for (let x = 0; x < this.width; x++) {
-      // For every xoff, start yoff at 0.
-      let yoff = 0.0; //[bold]
+      let yOff = 0.0;
 
       for (let y = 0; y < this.height; y++) {
-        // Use xoff and yoff for noise().
-        let bright = s.map(s.noise(xoff, yoff), 0, 1, 0, 255); //[bold]
-        // Use x and y for pixel location.
+        let bright = s.map(s.noise(xOff, yOff), 0, 1, 0, 255); //[bold]
         s.set(x, y, s.color(bright));
-        // Increment yoff.
-        yoff += 0.01; //[bold]
+        yOff += 0.01;
       }
-      // Increment xoff.
-      xoff += 0.01;  //[bold]
+      xOff += 0.01;
     }
     s.updatePixels();
   }
@@ -77,10 +67,6 @@ export class Ps5Component implements OnInit {
 
   createHeightMap() {
     const sketch = (_p5: p5) => {
-
-      _p5.preload = () => {
-        // preload code
-      };
 
       _p5.setup = () => {
         this.reset(_p5);
