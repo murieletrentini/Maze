@@ -12,6 +12,7 @@ import {StartComponent} from './start/start.component';
 import {ChartComponent} from './traveling-salesman/chart/chart.component';
 import {SettingsComponent} from './traveling-salesman/settings/settings.component';
 import {RandomnessComponent} from './randomness/randomness.component';
+import {Ps5Component} from './ps5/ps5.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {RandomnessComponent} from './randomness/randomness.component';
     StartComponent,
     ChartComponent,
     SettingsComponent,
-    RandomnessComponent
+    RandomnessComponent,
+    Ps5Component
   ],
   entryComponents:  [SettingsComponent],
   imports: [
