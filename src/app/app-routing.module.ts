@@ -13,7 +13,7 @@ const routes: Routes = [
     loadChildren: () => import('./traveling-salesman/traveling-salesman.module').then(mod => mod.TravelingSalesmanModule)
   },
   {
-    path: 'ps5',
+    path: 'p5',
     loadChildren: () => import('./nature-of-code/nature-of-code.module').then(mod => mod.NatureOfCodeModule)
   },
 ];

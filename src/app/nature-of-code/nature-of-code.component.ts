@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as p5 from 'p5';
 import 'p5/lib/addons/p5.sound';
 import 'p5/lib/addons/p5.dom';
-import {Landscape} from './model';
+import {Landscape, Mover2D} from './model';
 
 @Component({
   selector: 'app-ps5',
@@ -22,13 +22,23 @@ export class NatureOfCodeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.p5 = new p5();
-    setTimeout(() => this.p5.createCanvas(this.width, this.height).parent('canvas'), 100)
+    this.p5 = new p5(null);
+    setTimeout(() => this.p5.createCanvas(this.width, this.height).parent('canvas'), 100);
 
   }
 
+  reset(_p5: p5, use3D: boolean) {
+    this.p5.noLoop();
+    this.p5.noCanvas();
+    if (use3D) {
+      _p5.createCanvas(this.width, this.height, _p5.WEBGL).parent('canvas');
+    } else {
+      _p5.createCanvas(this.width, this.height).parent('canvas');
+    }
+  }
+
   createClouds() {
-    const sketch = (_p5) => {
+    const sketch = (_p5: p5) => {
       _p5.preload = () => {
         this.width = window.innerWidth;
       };
@@ -47,9 +57,9 @@ export class NatureOfCodeComponent implements OnInit {
   }
 
 
-  private perlinNoise(s) {
-    s.loadPixels();
-    let img = s.createImage(this.width, this.height);
+  private perlinNoise(_p5: p5) {
+    _p5.loadPixels();
+    let img = _p5.createImage(this.width, this.height);
     img.loadPixels();
     let xOff = 0.0;
 
@@ -57,22 +67,13 @@ export class NatureOfCodeComponent implements OnInit {
       let yOff = 0.0;
 
       for (let y = 0; y < this.height; y++) {
-        let bright = s.map(s.noise(xOff, yOff), 0, 1, 0, 255);
-        s.set(x, y, s.color(bright));
+        let bright = _p5.map(_p5.noise(xOff, yOff), 0, 1, 0, 255);
+        _p5.set(x, y, _p5.color(bright));
         yOff += 0.01;
       }
       xOff += 0.01;
     }
-    s.updatePixels();
-  }
-
-  reset(_p5, use3D: boolean) {
-    this.p5.noCanvas();
-    if (use3D) {
-      _p5.createCanvas(this.width, this.height, _p5.WEBGL).parent('canvas');
-    } else {
-      _p5.createCanvas(this.width, this.height).parent('canvas');
-    }
+    _p5.updatePixels();
   }
 
   createHeightMap() {
@@ -106,7 +107,7 @@ export class NatureOfCodeComponent implements OnInit {
     this.p5 = new p5(sketch);
   }
 
-  bounceBall() {
+  bounceBall3D() {
     let location;
     let velocity;
     let ballSize = 16;
@@ -117,9 +118,9 @@ export class NatureOfCodeComponent implements OnInit {
       };
 
       _p5.setup = () => {
-        this.reset(_p5, false);
-        location = _p5.createVector(100, 100);
-        velocity = _p5.createVector(2.5, 5);
+        this.reset(_p5, true);
+        location = _p5.createVector(100, 100, 100);
+        velocity = _p5.createVector(2.5, 5, 7.5);
       };
 
       /**
@@ -135,11 +136,44 @@ export class NatureOfCodeComponent implements OnInit {
         if ((location.y > this.height - ballSize / 2) || (location.y < ballSize / 2)) {
           velocity.y = velocity.y * -1;
         }
+        if ((location.z > this.height - ballSize / 2) || (location.z < ballSize / 2)) {
+          velocity.z = velocity.z * -1;
+        }
 
-        _p5.noStroke();
-        _p5.fill('#ffffff');
+        // _p5.noStroke();
+        // _p5.fill('#ffffff');
+        _p5.push();
+        _p5.translate(location.x - 500, location.y - 200, location.z - 500);
+        _p5.sphere(ballSize);
+        _p5.pop();
+      };
+    };
 
-        _p5.ellipse(location.x, location.y, ballSize);
+    this.p5 = new p5(sketch);
+  }
+
+  bounceBall() {
+    const ball = new Mover2D('circle', 16);
+    const color = '#FFFFFF';
+
+    const sketch = (_p5: p5) => {
+      _p5.preload = () => {
+        this.width = window.innerWidth;
+      };
+
+      _p5.setup = () => {
+        this.reset(_p5, false);
+        ball.location = _p5.createVector(100, 100);
+        ball.velocity = _p5.createVector(2.5, 5);
+      };
+
+      /**
+       * Continuously executed until the program is stopped
+       */
+      _p5.draw = () => {
+        ball.update();
+        ball.checkEdges(this.width, this.height);
+        ball.display(_p5, this.backgroundColor, color, color);
       };
     };
 
