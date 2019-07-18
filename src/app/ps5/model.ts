@@ -9,7 +9,7 @@ export class Landscape {
   h;           // width and height of thingie
   rows;
   cols;    // number of rows and columns
-  zoff = 0.0;  // perlin noise argument
+  zOff = 0.0;  // perlin noise argument
   z: number[][];
   private _p5: p5;
 
@@ -31,16 +31,16 @@ export class Landscape {
 
 // Calculate height values
   calculate(): void {
-    let xoff = 0;
+    let xOff = 0;
     for (let i = 0; i < this.cols; i++) {
-      let yoff = 0;
+      let yOff = 0;
       for (let j = 0; j < this.rows; j++) {
-        this.z[i][j] = this._p5.map(this._p5.noise(xoff, yoff, this.zoff), 0, 1, -120, 120);
-        yoff += 0.1;
+        this.z[i][j] = this._p5.map(this._p5.noise(xOff, yOff, this.zOff), 0, 1, -120, 120);
+        yOff += 0.1;
       }
-      xoff += 0.1;
+      xOff += 0.1;
     }
-    this.zoff += 0.01;
+    this.zOff += 0.01;
   }
 
 // Render landscape as grid of quads

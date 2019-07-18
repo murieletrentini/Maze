@@ -21,13 +21,18 @@ export class Ps5Component implements OnInit {
 
   ngOnInit() {
     this.p5 = new p5();
+    setTimeout(() => this.p5.createCanvas(this.width, this.height).parent('canvas'), 100)
+
   }
 
   createClouds() {
     const sketch = (_p5) => {
+      _p5.preload = () => {
+        this.width = window.innerWidth;
+      };
 
       _p5.setup = () => {
-        this.reset(_p5);
+        this.reset(_p5, false);
       };
 
       _p5.draw = () => {
@@ -60,17 +65,23 @@ export class Ps5Component implements OnInit {
   }
 
 
-  reset(_p5) {
+  reset(_p5, use3D: boolean) {
     this.p5.noCanvas();
-    _p5.createCanvas(this.width, this.height).parent('canvas');
+    if (use3D) {
+      _p5.createCanvas(this.width, this.height, _p5.WEBGL).parent('canvas');
+    } else {
+      _p5.createCanvas(this.width, this.height).parent('canvas');
+    }
   }
 
   createHeightMap() {
     const sketch = (_p5: p5) => {
+      _p5.preload = () => {
+        this.width = 400;
+      };
 
       _p5.setup = () => {
-        this.reset(_p5);
-        _p5.createCanvas(this.width, this.height, _p5.WEBGL).parent('canvas');
+        this.reset(_p5, true);
         this.land = new Landscape(20, this.width, this.height, _p5);
         this.land.calculate();
       };
@@ -79,7 +90,7 @@ export class Ps5Component implements OnInit {
        * Continuously executed until the program is stopped
        */
       _p5.draw = () => {
-        _p5.background(255);
+        _p5.background('#979797');
         _p5.push();
         _p5.translate(this.width / 10, this.height / 10, -500);
         _p5.rotateX(Math.PI / 3);
@@ -88,6 +99,46 @@ export class Ps5Component implements OnInit {
         _p5.pop();
 
         this.theta += 0.0025;
+      };
+    };
+
+    this.p5 = new p5(sketch);
+  }
+
+  bounceBall() {
+    let location;
+    let velocity;
+    let ballSize = 16;
+
+    const sketch = (_p5: p5) => {
+      _p5.preload = () => {
+        this.width = window.innerWidth;
+      };
+
+      _p5.setup = () => {
+        this.reset(_p5, false);
+        location = _p5.createVector(100, 100);
+        velocity = _p5.createVector(2.5, 5);
+      };
+
+      /**
+       * Continuously executed until the program is stopped
+       */
+      _p5.draw = () => {
+        _p5.background('#979797');
+
+        location.add(velocity);
+        if ((location.x > this.width - ballSize / 2) || (location.x < ballSize / 2)) {
+          velocity.x = velocity.x * -1;
+        }
+        if ((location.y > this.height - ballSize / 2) || (location.y < ballSize / 2)) {
+          velocity.y = velocity.y * -1;
+        }
+
+        _p5.noStroke();
+        _p5.fill('#ffffff');
+
+        _p5.ellipse(location.x, location.y, ballSize);
       };
     };
 
