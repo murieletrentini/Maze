@@ -25,6 +25,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   constructor(private mazeGeneratorService: MazeGeneratorService,
               private pathFinderService: PathFinderService) {
+                // empty ctor
   }
 
   isRunning$(): Observable<boolean> {
